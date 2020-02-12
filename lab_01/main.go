@@ -55,12 +55,14 @@ func (c *cords) insertByX(d dot) int {
 	var t dot
 	*c = append(*c, t)
 	isAsc := c.isFuncAscending()
-	if isAsc == true && d.X < (*c)[0].X || isAsc == false && d.X > (*c)[0].X {
+	if isAsc == true && d.X < (*c)[0].X ||
+		isAsc == false && d.X > (*c)[0].X {
 		copy((*c)[1:], (*c)[0:])
 		(*c)[0] = d
 		return 0
 	}
-	if isAsc == true && d.X > (*c)[len(*c)-2].X || isAsc == false && d.X < (*c)[len(*c)-2].X {
+	if isAsc == true && d.X > (*c)[len(*c)-2].X ||
+		isAsc == false && d.X < (*c)[len(*c)-2].X {
 		(*c)[len(*c)-1] = d
 		return len(*c) - 1
 	}
