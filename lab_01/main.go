@@ -1,26 +1,28 @@
 package main
 
 import (
+	"cartesian"
 	"fmt"
+	"interpolation"
 	"os"
 	"sort"
 )
 
 func main() {
 	var (
-		d dot
+		d cartesian.Dot
 		n int
 	)
-	ds := dotSet{}
+	ds := cartesian.DotSet{}
 
-	f, err := os.Open("dots.txt")
+	f, err := os.Open("data/dots.txt")
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	readDots(f, &ds, &d, &n)
+	interpolation.ReadDots(f, &ds, &d, &n)
 	ds.Append(d)
 	sort.Sort(ds)
-	pos := ds.GetPos(d)
-	fmt.Println(ds, d, n, pos)
+	base := interpolation.GetBase(ds, d, n)
+	fmt.Println(ds, d, base)
 }
