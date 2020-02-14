@@ -9,25 +9,29 @@ import (
 func GetBase(ds cartesian.DotSet, d cartesian.Dot, n int) cartesian.DotSet {
 	base := cartesian.DotSet{}
 	pos := ds.GetPos(d)
-	var t int
 
 	if pos < n/2 {
-		for i := 0; i < pos; i++ {
+		for i := 0; i < n+1; i++ {
+			if i == pos {
+				continue
+			}
 			base.Append(ds[i])
-			t = n - pos
 		}
-		for i := pos + 1; i < pos+t+1; i++ {
+	} else if len(ds)-pos-1 < n/2 {
+		for i := len(ds) - n - 1; i < len(ds); i++ {
+			if i == pos {
+				continue
+			}
 			base.Append(ds[i])
 		}
-	}
-	if len(ds)-pos < n/2 {
-		rb := len(ds) - pos - 1
-		lb := pos - n + rb
+	} else {
+		lb := n / 2
+		rb := n - lb + 1
 
-		for i := lb; lb < pos; i++ {
-			base.Append(ds[i])
-		}
-		for i := pos + 1; i < rb; i++ {
+		for i := pos - lb; i < pos+rb; i++ {
+			if i == pos {
+				continue
+			}
 			base.Append(ds[i])
 		}
 	}
