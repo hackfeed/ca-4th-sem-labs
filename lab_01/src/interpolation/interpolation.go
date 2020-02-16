@@ -6,6 +6,21 @@ import (
 	"io"
 )
 
+func Interpolation(tb [][]float64, d cartesian.Dot) float64 {
+	p := 1.0
+	var c float64
+
+	for i := 2; i < len(tb); i++ {
+		c = 1
+		for j := 0; j < i-1; j++ {
+			c *= d.X - tb[0][j]
+		}
+		c *= tb[i][0]
+		p += c
+	}
+	return p
+}
+
 func MakeTable(ds cartesian.DotSet, d cartesian.Dot, n int) [][]float64 {
 	base := GetBase(ds, d, n)
 	baselen := len(base)
@@ -26,7 +41,6 @@ func MakeTable(ds cartesian.DotSet, d cartesian.Dot, n int) [][]float64 {
 			tb[i][j] = (tb[i-1][j] - tb[i-1][j+1]) / (tb[0][j] - tb[0][j+k+1])
 		}
 	}
-
 	return tb
 }
 
@@ -34,15 +48,15 @@ func GetBase(ds cartesian.DotSet, d cartesian.Dot, n int) cartesian.DotSet {
 	base := cartesian.DotSet{}
 	pos := ds.GetPos(d)
 
-	if pos < n/2 {
-		for i := 0; i < n+2; i++ {
+	if pos <= n/2 {
+		for i := 0; i < n+1; i++ {
 			if i == pos {
 				continue
 			}
 			base.Append(ds[i])
 		}
-	} else if len(ds)-pos-1 < n/2 {
-		for i := len(ds) - n - 2; i < len(ds); i++ {
+	} else if len(ds)-pos-1 <= n/2 {
+		for i := len(ds) - n - 1; i < len(ds); i++ {
 			if i == pos {
 				continue
 			}
@@ -51,6 +65,14 @@ func GetBase(ds cartesian.DotSet, d cartesian.Dot, n int) cartesian.DotSet {
 	} else {
 		lb := n / 2
 		rb := n - lb + 2
+		if pos+rb > len(ds)-1 {
+			rb--
+			lb++
+		}
+		if pos-lb < 0 {
+			rb++
+			lb--
+		}
 
 		for i := pos - lb; i < pos+rb; i++ {
 			if i == pos {

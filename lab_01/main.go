@@ -24,5 +24,7 @@ func main() {
 	ds.Append(d)
 	sort.Sort(ds)
 	base := interpolation.GetBase(ds, d, n)
-	fmt.Println(ds, d, base)
+	tb := interpolation.MakeTable(ds, d, n)
+	p := interpolation.Interpolation(tb, d)
+	fmt.Println(ds, d, base, tb, p)
 }
