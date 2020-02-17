@@ -9,6 +9,9 @@ type Dot struct {
 // DotSet type used to represent amount of cartesian dots.
 type DotSet []Dot
 
+// FTable used to represent table of float numbers.
+type FTable [][]float64
+
 // START: sort.Interface satisfying receiver functions.
 
 func (ds DotSet) Len() int {
@@ -24,11 +27,6 @@ func (ds DotSet) Swap(i, j int) {
 }
 
 // END: sort.Interface satisfying receiver functions.
-
-// Append used to add a Dot element to DotSet element.
-func (ds *DotSet) Append(d Dot) {
-	*ds = append(*ds, d)
-}
 
 // GetPos used to find place where should insert dot to
 // make yet set be sorted.

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"sort"
 
@@ -9,18 +10,17 @@ import (
 )
 
 func main() {
-	var (
-		d interp.Dot
-		n int
-	)
-	ds := interp.DotSet{}
-
 	f, err := os.Open("data/dots.txt")
 	if err != nil {
 		fmt.Println("Error:", err)
 		os.Exit(1)
 	}
-	interp.ReadDots(f, &ds, &d, &n)
+
+	getComputations(f)
+}
+
+func getComputations(f io.Reader) {
+	ds, d, n := interp.ReadDots(f)
 	sort.Sort(ds)
 	base := interp.GetBase(ds, d, n)
 	tb := interp.MakeTable(ds, d, n)

@@ -55,11 +55,11 @@ func GetBase(ds DotSet, d Dot, n int) DotSet {
 
 	if pos <= n/2 {
 		for i := 0; i < n+1; i++ {
-			base.Append(ds[i])
+			base = append(base, ds[i])
 		}
 	} else if len(ds)-pos-1 <= n/2 {
 		for i := len(ds) - n - 1; i < len(ds); i++ {
-			base.Append(ds[i])
+			base = append(base, ds[i])
 		}
 	} else {
 		lb := n / 2
@@ -74,16 +74,19 @@ func GetBase(ds DotSet, d Dot, n int) DotSet {
 		}
 
 		for i := pos - lb; i < pos+rb; i++ {
-			base.Append(ds[i])
+			base = append(base, ds[i])
 		}
 	}
 	return base
 }
 
 // ReadDots used to read Dot objects to DotSet object from file.
-func ReadDots(f io.Reader, ds *DotSet, d *Dot, n *int) {
+func ReadDots(f io.Reader) (DotSet, Dot, int) {
 	var (
 		dotsNum int
+		n       int
+		ds      DotSet
+		d       Dot
 		curDot  Dot
 	)
 
@@ -93,8 +96,10 @@ func ReadDots(f io.Reader, ds *DotSet, d *Dot, n *int) {
 		if err == io.EOF {
 			break
 		}
-		*ds = append(*ds, curDot)
+		ds = append(ds, curDot)
 	}
 	fmt.Fscanln(f, &d.X)
-	fmt.Fscanln(f, n)
+	fmt.Fscanln(f, &n)
+
+	return ds, d, n
 }
