@@ -3,11 +3,52 @@ package interp
 import (
 	"fmt"
 	"io"
+	"math"
+	"sort"
 )
+
+// InvInterpolation used to find root of function using inverted interpolation.
+func InvInterpolation(ds DotSet, n int) float64 {
+	ds.AxisSwap()
+	sort.Sort(ds)
+
+	d := Dot{
+		X: 0,
+	}
+
+	return Interpolation(ds, d, n)
+}
+
+// Bisection used to find root of function using bisection method.
+func Bisection(ds DotSet, n int, eps float64) float64 {
+	if math.Signbit(ds[0].Y) == math.Signbit(ds[len(ds)-1].Y) {
+		return -1.111
+	}
+	low, high := ds[0].X, ds[len(ds)-1].X
+	mid := (low + high) / 2
+
+	for math.Abs(high-low) >= eps*mid+eps {
+		lowd := Dot{
+			X: low,
+		}
+		midd := Dot{
+			X: mid,
+		}
+		if Interpolation(ds, lowd, n)*Interpolation(ds, midd, n) < 0 {
+			high = mid
+		} else {
+			low = mid
+		}
+		mid = (low + high) / 2
+	}
+
+	return mid
+}
 
 // Interpolation used to find value of X Dot coordinate
 // using Newton polynom.
-func Interpolation(tb [][]float64, d Dot) float64 {
+func Interpolation(ds DotSet, d Dot, n int) float64 {
+	tb := MakeTable(ds, d, n)
 	p := tb[1][0]
 	var c float64
 
@@ -18,7 +59,9 @@ func Interpolation(tb [][]float64, d Dot) float64 {
 		}
 		c *= tb[i][0]
 		p += c
+
 	}
+
 	return p
 }
 
@@ -44,6 +87,7 @@ func MakeTable(ds DotSet, d Dot, n int) [][]float64 {
 			tb[i][j] = (tb[i-1][j] - tb[i-1][j+1]) / (tb[0][j] - tb[0][j+k+1])
 		}
 	}
+
 	return tb
 }
 
@@ -77,29 +121,36 @@ func GetBase(ds DotSet, d Dot, n int) DotSet {
 			base = append(base, ds[i])
 		}
 	}
+
 	return base
 }
 
-// ReadDots used to read Dot objects to DotSet object from file.
-func ReadDots(f io.Reader) (DotSet, Dot, int) {
+// ReadFuncData used to read function X coordinate and polynom degree.
+func ReadFuncData() (Dot, int) {
 	var (
-		dotsNum int
-		n       int
-		ds      DotSet
-		d       Dot
-		curDot  Dot
+		d Dot
+		n int
 	)
 
-	fmt.Fscanln(f, &dotsNum)
-	for i := 0; i < dotsNum; i++ {
+	fmt.Scan(&d.X, &n)
+
+	return d, n
+}
+
+// ReadDots used to read Dot objects to DotSet object from file.
+func ReadDots(f io.Reader) DotSet {
+	var (
+		ds     DotSet
+		curDot Dot
+	)
+
+	for {
 		_, err := fmt.Fscanln(f, &curDot.X, &curDot.Y)
 		if err == io.EOF {
 			break
 		}
 		ds = append(ds, curDot)
 	}
-	fmt.Fscanln(f, &d.X)
-	fmt.Fscanln(f, &n)
 
-	return ds, d, n
+	return ds
 }

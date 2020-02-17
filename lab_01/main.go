@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io"
 	"os"
 	"sort"
 
@@ -16,14 +15,23 @@ func main() {
 		os.Exit(1)
 	}
 
-	getComputations(f)
-}
+	ds := interp.ReadDots(f)
+	fmt.Printf("Table loaded from file:\n\n")
+	ds.PrintDots()
 
-func getComputations(f io.Reader) {
-	ds, d, n := interp.ReadDots(f)
+	fmt.Printf("\nEnter X value and polynom degree: ")
+	d, n := interp.ReadFuncData()
+
 	sort.Sort(ds)
-	base := interp.GetBase(ds, d, n)
-	tb := interp.MakeTable(ds, d, n)
-	p := interp.Interpolation(tb, d)
-	fmt.Println(ds, d, base, tb, p)
+
+	d.Y = interp.Interpolation(ds, d, n)
+	fmt.Printf("Function value in %5.2f dot is %5.4f\n\n", d.X, d.Y)
+
+	rootBis := interp.Bisection(ds, n, 0.001)
+	fmt.Printf("Root found by bisection method is %.4f\n", rootBis)
+	fmt.Printf("If root value is equivalent to -1.1110, that means that\n" +
+		"there is no possibility to find root by bisection method in given dot set.\n\n")
+
+	rootInvInterp := interp.InvInterpolation(ds, n)
+	fmt.Printf("Root found by inverted interpolation method is %.4f\n\n", rootInvInterp)
 }
