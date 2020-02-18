@@ -11,9 +11,6 @@ type Dot struct {
 // DotSet type used to represent amount of cartesian dots.
 type DotSet []Dot
 
-// FTable used to represent table of float numbers.
-type FTable [][]float64
-
 // PrintDots used to print dots in table form to standart output.
 func (ds DotSet) PrintDots() {
 	for i := range ds {

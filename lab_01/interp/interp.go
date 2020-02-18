@@ -7,6 +7,9 @@ import (
 	"sort"
 )
 
+// FTable used to represent table of float numbers.
+type FTable [][]float64
+
 // InvInterpolation used to find root of function using inverted interpolation.
 func InvInterpolation(ds DotSet, n int) float64 {
 	ds.AxisSwap()
@@ -67,10 +70,10 @@ func Interpolation(ds DotSet, d Dot, n int) float64 {
 
 // MakeTable used to make table, which contains Newton
 // polynom coefficients.
-func MakeTable(ds DotSet, d Dot, n int) [][]float64 {
+func MakeTable(ds DotSet, d Dot, n int) FTable {
 	base := GetBase(ds, d, n)
 	baselen := len(base)
-	tb := make([][]float64, n+2)
+	tb := make(FTable, n+2)
 	tblen := len(tb)
 	for i := range tb {
 		tb[i] = make([]float64, baselen)
