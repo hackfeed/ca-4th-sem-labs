@@ -87,7 +87,8 @@ func MakeTable(ds DotSet, d Dot, n int) FTable {
 	for i := 2; i < tblen; i++ {
 		k := i - 2
 		for j := 0; j < baselen-i+1; j++ {
-			tb[i][j] = (tb[i-1][j] - tb[i-1][j+1]) / (tb[0][j] - tb[0][j+k+1])
+			tb[i][j] = (tb[i-1][j] - tb[i-1][j+1]) /
+				(tb[0][j] - tb[0][j+k+1])
 		}
 	}
 

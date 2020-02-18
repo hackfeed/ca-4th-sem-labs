@@ -43,5 +43,6 @@ func main() {
 	}
 
 	rootInvInterp := interp.InvInterpolation(ds, n)
-	fmt.Printf("Root found by inverted interpolation method is %.4f\n\n", rootInvInterp)
+	fmt.Printf("Root found by inverted interpolation method is %.4f\n\n",
+		rootInvInterp)
 }
