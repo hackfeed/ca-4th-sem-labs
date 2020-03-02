@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"sort"
 
 	"./interp"
 )
@@ -21,14 +20,15 @@ func main() {
 	}
 
 	ds := interp.ReadDots(f)
-	fmt.Printf("Table loaded from file:\n\n")
-	ds.PrintDots()
+	fmt.Println(ds)
+	// fmt.Printf("Table loaded from file:\n\n")
+	// ds.PrintDots()
 
-	fmt.Printf("\nEnter X value and polynom degree: ")
-	d, n := interp.ReadFuncData()
+	// fmt.Printf("\nEnter X value and polynom degree: ")
+	// d, n := interp.ReadFuncData()
 
-	sort.Sort(ds)
+	// sort.Sort(ds)
 
-	d.Y = interp.Interpolation(ds, d, n)
-	fmt.Printf("\nFunction value in %5.2f dot is %5.4f\n\n", d.X, d.Y)
+	// d.Y = interp.Interpolation(ds, d, n)
+	// fmt.Printf("\nFunction value in %5.2f dot is %5.4f\n\n", d.X, d.Y)
 }

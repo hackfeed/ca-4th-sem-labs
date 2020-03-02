@@ -25,9 +25,11 @@ func main() {
 	step, _ := strconv.ParseFloat(os.Args[3], 64)
 
 	data := genData(start, end, step)
+	ds := len(data)
 
-	for i := 0; i < len(data); i++ {
-		for j := 0; j < len(data); j++ {
+	f.WriteString(fmt.Sprintf("%d\n", ds))
+	for i := 0; i < ds; i++ {
+		for j := 0; j < ds; j++ {
 			f.WriteString(fmt.Sprintf("%8.2f", data[i][j]))
 		}
 		f.WriteString("\n")
