@@ -19,13 +19,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	ds := interp.ReadDots(f)
-	fmt.Println(ds)
-	// fmt.Printf("Table loaded from file:\n\n")
-	// ds.PrintDots()
+	dm := interp.ReadDots(f)
+	dm.PrintMatrix()
 
-	// fmt.Printf("\nEnter X value and polynom degree: ")
-	// d, n := interp.ReadFuncData()
+	fmt.Printf("\nEnter X, Y value and X, Y polynom degrees: ")
+	d, nx, ny := interp.ReadFuncData()
+	interp.BiInterpolation(dm, d, nx, ny)
 
 	// sort.Sort(ds)
 
