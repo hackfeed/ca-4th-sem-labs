@@ -8,33 +8,15 @@ import (
 // FTable used to represent table of float numbers.
 type FTable [][]float64
 
+// BiInterpolation used to find value of X,Y Dot coordinate
+// using Newton polynom.
 func BiInterpolation(dm DotMatrix, d Dot, nx, ny int) float64 {
-	xcol, yrow, zdm := SplitData(dm)
-
+	xcol, yrow, zdm := splitData(dm)
 	masterSet := make(DotSet, 0)
-	baseX := GetBase(xcol, d, nx)
-	fmt.Println(baseX)
-	startX, endX := 0, 0
-	for i, el := range xcol {
-		if el == baseX[0] {
-			startX = i
-			endX = startX + nx
-			break
-		}
-	}
 
+	baseX, startX, endX := getDimBase(xcol, d, nx)
 	d.X, d.Y = d.Y, d.X
-
-	baseY := GetBase(yrow, d, ny)
-	fmt.Println(baseY)
-	startY, endY := 0, 0
-	for i, el := range yrow {
-		if el == baseY[0] {
-			startY = i
-			endY = startY + ny
-			break
-		}
-	}
+	baseY, startY, endY := getDimBase(yrow, d, ny)
 
 	ftb := make(DotMatrix, nx+1)
 	for i := range ftb {
@@ -52,7 +34,6 @@ func BiInterpolation(dm DotMatrix, d Dot, nx, ny int) float64 {
 	}
 
 	for i := 0; i < len(ftb); i++ {
-		fmt.Println(ftb[i])
 		for j := 0; j < len(baseY); j++ {
 			ftb[i][j].Y = baseY[j].X
 			ftb[i][j].X, ftb[i][j].Y = ftb[i][j].Y, ftb[i][j].X
@@ -65,16 +46,14 @@ func BiInterpolation(dm DotMatrix, d Dot, nx, ny int) float64 {
 	}
 
 	d.X, d.Y = d.Y, d.X
-	fmt.Println(masterSet)
-	fmt.Println(Interpolation(masterSet, d, nx))
 
-	return 1.0
+	return Interpolation(masterSet, d, nx)
 }
 
 // Interpolation used to find value of X Dot coordinate
 // using Newton polynom.
 func Interpolation(ds DotSet, d Dot, n int) float64 {
-	tb := MakeTable(ds, d, n)
+	tb := makeTable(ds, d, n)
 	p := tb[1][0]
 	var c float64
 
@@ -89,89 +68,6 @@ func Interpolation(ds DotSet, d Dot, n int) float64 {
 	}
 
 	return p
-}
-
-// MakeTable used to make table, which contains Newton
-// polynom coefficients.
-func MakeTable(ds DotSet, d Dot, n int) FTable {
-	base := GetBase(ds, d, n)
-	baselen := len(base)
-	tb := make(FTable, n+2)
-	tblen := len(tb)
-	for i := range tb {
-		tb[i] = make([]float64, baselen)
-	}
-
-	for i := range tb[0] {
-		tb[0][i] = base[i].X
-		tb[1][i] = base[i].Y
-	}
-
-	for i := 2; i < tblen; i++ {
-		k := i - 2
-		for j := 0; j < baselen-i+1; j++ {
-			tb[i][j] = (tb[i-1][j] - tb[i-1][j+1]) /
-				(tb[0][j] - tb[0][j+k+1])
-		}
-	}
-
-	return tb
-}
-
-// GetBase used to make DotSet, which contains closest
-// dots to find Newton polynom's coefficients.
-func GetBase(ds DotSet, d Dot, n int) DotSet {
-	base := DotSet{}
-	pos := ds.GetPos(d)
-
-	if pos <= n/2 {
-		for i := 0; i < n+1; i++ {
-			base = append(base, ds[i])
-		}
-	} else if len(ds)-pos-1 <= n/2 {
-		for i := len(ds) - n - 1; i < len(ds); i++ {
-			base = append(base, ds[i])
-		}
-	} else {
-		lb := n / 2
-		rb := n - lb + 1
-		if pos+rb > len(ds)-1 {
-			rb--
-			lb++
-		}
-		if pos-lb < 0 {
-			rb++
-			lb--
-		}
-
-		for i := pos - lb; i < pos+rb; i++ {
-			base = append(base, ds[i])
-		}
-	}
-
-	return base
-}
-
-func SplitData(dm DotMatrix) (DotSet, DotSet, DotMatrix) {
-	xcol := make(DotSet, 0)
-	for i := 1; i < len(dm); i++ {
-		xcol = append(xcol, dm[i][0])
-	}
-
-	yrow := dm[0][1:]
-
-	zdm := make(DotMatrix, len(dm)-1)
-	for i := range zdm {
-		zdm[i] = make(DotSet, len(dm)-1)
-	}
-
-	for i := 1; i < len(dm); i++ {
-		for j := 1; j < len(dm); j++ {
-			zdm[i-1][j-1] = dm[i][j]
-		}
-	}
-
-	return xcol, yrow, zdm
 }
 
 // ReadFuncData used to read function X coordinate and polynom degree.
@@ -207,4 +103,98 @@ func ReadDots(f io.Reader) DotMatrix {
 	}
 
 	return data
+}
+
+func getDimBase(ds DotSet, d Dot, n int) (DotSet, int, int) {
+	base := getBase(ds, d, n)
+	start, end := 0, 0
+
+	for i, el := range ds {
+		if el == base[0] {
+			start = i
+			end = start + n
+			break
+		}
+	}
+
+	return base, start, end
+}
+
+func makeTable(ds DotSet, d Dot, n int) FTable {
+	base := getBase(ds, d, n)
+	baselen := len(base)
+	tb := make(FTable, n+2)
+	tblen := len(tb)
+	for i := range tb {
+		tb[i] = make([]float64, baselen)
+	}
+
+	for i := range tb[0] {
+		tb[0][i] = base[i].X
+		tb[1][i] = base[i].Y
+	}
+
+	for i := 2; i < tblen; i++ {
+		k := i - 2
+		for j := 0; j < baselen-i+1; j++ {
+			tb[i][j] = (tb[i-1][j] - tb[i-1][j+1]) /
+				(tb[0][j] - tb[0][j+k+1])
+		}
+	}
+
+	return tb
+}
+
+func getBase(ds DotSet, d Dot, n int) DotSet {
+	base := DotSet{}
+	pos := ds.getPos(d)
+
+	if pos <= n/2 {
+		for i := 0; i < n+1; i++ {
+			base = append(base, ds[i])
+		}
+	} else if len(ds)-pos-1 <= n/2 {
+		for i := len(ds) - n - 1; i < len(ds); i++ {
+			base = append(base, ds[i])
+		}
+	} else {
+		lb := n / 2
+		rb := n - lb + 1
+		if pos+rb > len(ds)-1 {
+			rb--
+			lb++
+		}
+		if pos-lb < 0 {
+			rb++
+			lb--
+		}
+
+		for i := pos - lb; i < pos+rb; i++ {
+			base = append(base, ds[i])
+		}
+	}
+
+	return base
+}
+
+func splitData(dm DotMatrix) (DotSet, DotSet, DotMatrix) {
+	xcol := make(DotSet, 0)
+	for i := 1; i < len(dm); i++ {
+		xcol = append(xcol, dm[i][0])
+	}
+
+	yrow := dm[0][1:]
+
+	zdm := make(DotMatrix, len(dm)-1)
+	for i := range zdm {
+		zdm[i] = make(DotSet, len(dm)-1)
+	}
+
+	for i := 1; i < len(dm); i++ {
+		for j := 1; j < len(dm); j++ {
+			zdm[i-1][j-1] = dm[i][j]
+		}
+	}
+
+	return xcol, yrow, zdm
 }

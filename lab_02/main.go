@@ -20,14 +20,12 @@ func main() {
 	}
 
 	dm := interp.ReadDots(f)
+	fmt.Printf("Table loaded from file:\n\n")
 	dm.PrintMatrix()
 
 	fmt.Printf("\nEnter X, Y value and X, Y polynom degrees: ")
 	d, nx, ny := interp.ReadFuncData()
-	interp.BiInterpolation(dm, d, nx, ny)
 
-	// sort.Sort(ds)
-
-	// d.Y = interp.Interpolation(ds, d, n)
-	// fmt.Printf("\nFunction value in %5.2f dot is %5.4f\n\n", d.X, d.Y)
+	Z := interp.BiInterpolation(dm, d, nx, ny)
+	fmt.Printf("\nFunction value in (%5.2f;%5.2f) dot is %5.4f\n\n", d.X, d.Y, Z)
 }

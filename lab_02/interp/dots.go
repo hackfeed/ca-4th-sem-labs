@@ -11,8 +11,10 @@ type Dot struct {
 // DotSet type used to represent amount of cartesian dots.
 type DotSet []Dot
 
+// DotMatrix type used to represent matrix of cartesian dots.
 type DotMatrix []DotSet
 
+// PrintMatrix used to print X coords in DotMatrix.
 func (dm DotMatrix) PrintMatrix() {
 	for i := 0; i < len(dm); i++ {
 		for j := 0; j < len(dm); j++ {
@@ -22,9 +24,7 @@ func (dm DotMatrix) PrintMatrix() {
 	}
 }
 
-// GetPos used to find place where should insert dot to
-// make yet set be sorted.
-func (ds DotSet) GetPos(d Dot) int {
+func (ds DotSet) getPos(d Dot) int {
 	var pos int
 
 	if d.X < ds[0].X {
