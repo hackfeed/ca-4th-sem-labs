@@ -60,5 +60,5 @@ func genData(start, end, step float64) interp.FTable {
 }
 
 func mathFunc(x, y float64) float64 {
-	return 2 * x * y
+	return x*x - y*y*y
 }
