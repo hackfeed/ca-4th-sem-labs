@@ -5,16 +5,16 @@ import (
 	"io"
 )
 
-// Dot type used to represent cartesian dots.
+// Dot type used to represent plane dots.
 type Dot struct {
 	X float64
 	Y float64
 }
 
-// DotSet type used to represent amount of cartesian dots.
+// DotSet type used to represent amount of plane dots.
 type DotSet []Dot
 
-// ReadX used to read function X coordinate and polynom degree.
+// ReadX used to read function X coordinate.
 func ReadX() Dot {
 	var d Dot
 

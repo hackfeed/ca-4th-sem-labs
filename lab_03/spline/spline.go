@@ -41,7 +41,8 @@ func Spline(ds DotSet, xd *Dot) {
 	}
 
 	for i := 1; i < len(ds); i++ {
-		bi := (aCoef[i+1]-aCoef[i])/hCoef[i] - hCoef[i]/3*(cCoef[i+1]+2*cCoef[i])
+		bi := (aCoef[i+1]-aCoef[i])/hCoef[i] -
+			hCoef[i]/3*(cCoef[i+1]+2*cCoef[i])
 		bCoef = append(bCoef, bi)
 
 		di := (cCoef[i+1] - cCoef[i]) / 3 / hCoef[i]
