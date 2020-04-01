@@ -76,8 +76,10 @@ func MakeSLAE(ds DotSet, n int) F64Matrix {
 			slaeCoeffs := 0.0
 			expandedCoeff := 0.0
 			for k := 0; k < len(ds); k++ {
-				slaeCoeffs += ds[k].weight * math.Pow(ds[k].X, float64(i)) * math.Pow(ds[k].X, float64(j))
-				expandedCoeff += ds[k].weight * ds[k].Y * math.Pow(ds[k].X, float64(i))
+				slaeCoeffs += ds[k].weight * math.Pow(ds[k].X, float64(i)) *
+					math.Pow(ds[k].X, float64(j))
+				expandedCoeff += ds[k].weight * ds[k].Y *
+					math.Pow(ds[k].X, float64(i))
 			}
 			mat[i][j] = slaeCoeffs
 			mat[i][n+1] = expandedCoeff
