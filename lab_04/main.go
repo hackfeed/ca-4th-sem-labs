@@ -33,4 +33,9 @@ func main() {
 	sol := meansquare.SolveSLAE(ds, n)
 	fmt.Printf("\nSolved SLAE:\n\n")
 	sol.PrintMatrix()
+
+	coeffs := meansquare.GetCoeffs(sol)
+	dots := meansquare.GetApprox(ds, coeffs)
+
+	meansquare.DrawPlot(ds, dots)
 }
