@@ -1,65 +1,84 @@
 package integrate
 
-// import (
-// 	"fmt"
-// 	"image/color"
-// 	"os"
+import (
+	"fmt"
+	"image/color"
+	"math/rand"
+	"os"
+	"time"
 
-// 	"gonum.org/v1/plot"
-// 	"gonum.org/v1/plot/plotter"
-// 	"gonum.org/v1/plot/vg"
-// )
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
+)
 
-// func convertDots(ds DotSet) plotter.XYs {
-// 	var conv plotter.XYs
+func genLabel(n, m, md1, md2 int) string {
+	var f1s, f2s string
 
-// 	for _, d := range ds {
-// 		cd := plotter.XY{
-// 			X: d.X,
-// 			Y: d.Y,
-// 		}
-// 		conv = append(conv, cd)
-// 	}
+	if md1 == 0 {
+		f1s = "Gauss"
+	} else {
+		f1s = "Simpson"
+	}
 
-// 	return conv
-// }
+	if md2 == 0 {
+		f2s = "Gauss"
+	} else {
+		f2s = "Simpson"
+	}
 
-// // DrawPlot used to draw plot by approximated dots.
-// func DrawPlot(ds, approx DotSet) {
-// 	p, err := plot.New()
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		os.Exit(1)
-// 	}
+	return fmt.Sprintf("N = %v, M = %v, Methods = %v-%v", n, m, f1s, f2s)
+}
 
-// 	p.Title.Text = "Approximation using meansquare method"
-// 	p.X.Label.Text = "X"
-// 	p.Y.Label.Text = "Y"
-// 	p.Add(plotter.NewGrid())
+func genRandomNumber(min, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
+}
 
-// 	conv := convertDots(approx)
-// 	def := convertDots(ds)
+func GenDots(f func(p float64) float64, sc []float64) plotter.XYs {
+	ds := plotter.XYs{}
+	for i := sc[0]; i < sc[2]; i += sc[1] {
+		d := plotter.XY{
+			X: i,
+			Y: f(i),
+		}
+		ds = append(ds, d)
+	}
 
-// 	l, err := plotter.NewLine(conv)
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		os.Exit(1)
-// 	}
-// 	l.LineStyle.Width = vg.Points(1)
-// 	l.LineStyle.Color = color.RGBA{B: 255, A: 255}
+	return ds
+}
 
-// 	s, err := plotter.NewScatter(def)
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		os.Exit(1)
-// 	}
-// 	s.GlyphStyle.Color = color.RGBA{R: 255, B: 128, A: 255}
+func CreatePlot(title, x, y string) *plot.Plot {
+	pl, err := plot.New()
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+	pl.Title.Text = title
+	pl.X.Label.Text = x
+	pl.Y.Label.Text = y
+	pl.Add(plotter.NewGrid())
 
-// 	p.Add(l, s)
-// 	p.Legend.Add("approximated", l)
-// 	p.Legend.Add("data", s)
+	return pl
+}
 
-// 	if err := p.Save(4*vg.Inch, 4*vg.Inch, "points.png"); err != nil {
-// 		panic(err)
-// 	}
-// }
+// DrawPlot used to draw plot by approximated dots.
+func DrawPlot(p *plot.Plot, ds plotter.XYs, n, m, md1, md2 int) {
+
+	l, err := plotter.NewLine(ds)
+	if err != nil {
+		fmt.Println("Error:", err)
+		os.Exit(1)
+	}
+	l.LineStyle.Width = vg.Points(1)
+	l.LineStyle.Color = color.RGBA{B: uint8(genRandomNumber(0, 255)), A: uint8(genRandomNumber(0, 255))}
+
+	p.Add(l)
+	p.Legend.Add(genLabel(n, m, md1, md2), l)
+}
+
+func SavePlot(p *plot.Plot, f string) {
+	if err := p.Save(8*vg.Inch, 4*vg.Inch, f); err != nil {
+		panic(err)
+	}
+}
