@@ -35,6 +35,7 @@ func genRandomNumber(min, max int) int {
 	return rand.Intn(max-min) + min
 }
 
+// GenDots used to generate dots for plot representation.
 func GenDots(f func(p float64) float64, sc []float64) plotter.XYs {
 	ds := plotter.XYs{}
 	for i := sc[0]; i < sc[2]; i += sc[1] {
@@ -48,6 +49,7 @@ func GenDots(f func(p float64) float64, sc []float64) plotter.XYs {
 	return ds
 }
 
+// CreatePlot used to create base plot object.
 func CreatePlot(title, x, y string) *plot.Plot {
 	pl, err := plot.New()
 	if err != nil {
@@ -62,7 +64,7 @@ func CreatePlot(title, x, y string) *plot.Plot {
 	return pl
 }
 
-// DrawPlot used to draw plot by approximated dots.
+// DrawPlot used to draw plot with given dots.
 func DrawPlot(p *plot.Plot, ds plotter.XYs, n, m, md1, md2 int) {
 
 	l, err := plotter.NewLine(ds)
@@ -77,6 +79,7 @@ func DrawPlot(p *plot.Plot, ds plotter.XYs, n, m, md1, md2 int) {
 	p.Legend.Add(genLabel(n, m, md1, md2), l)
 }
 
+// SavePlot used to save gonum plot to file.
 func SavePlot(p *plot.Plot, f string) {
 	if err := p.Save(8*vg.Inch, 4*vg.Inch, f); err != nil {
 		panic(err)
