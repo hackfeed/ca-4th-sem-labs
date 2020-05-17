@@ -50,7 +50,8 @@ func SecondRungeDiff(y []float64, h, p float64) (res []DFloat64) {
 		if i < 2 {
 			res = append(res, newNil())
 		} else {
-			res = append(res, newVal(yh[i].value+(yh[i].value-y2h[i].value)/(math.Pow(2., p)-1)))
+			res = append(res, newVal(yh[i].value+(yh[i].value-y2h[i].value)/
+				(math.Pow(2., p)-1)))
 		}
 	}
 	return
@@ -63,7 +64,8 @@ func AlignedCoeffsDiff(x, y []float64) (res []DFloat64) {
 			res = append(res, newNil())
 		} else {
 			k := y[i] * y[i] / x[i] / x[i]
-			res = append(res, newVal(k*leftDiffInter(-1./y[i+1], -1./y[i], -1./x[i+1]- -1./x[i])))
+			res = append(res,
+				newVal(k*leftDiffInter(-1./y[i+1], -1./y[i], -1./x[i+1]- -1./x[i])))
 		}
 	}
 	return
