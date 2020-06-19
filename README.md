@@ -6,5 +6,5 @@
 Огромное спасибо вот этим ребятам, которые всячески помогали при написании/защите лабораторных работ! 
 Бесконечная вам любовь <3
 
-* @Justarone
-* @SpectralOne
+* [@Justarone](https://github.com/justarone)
+* [@SpectralOne](https://github.com/spectralone)
